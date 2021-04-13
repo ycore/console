@@ -2,9 +2,9 @@
 
 namespace Console\Process;
 
-use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Process as SymfonyProcess;
 
-class ConsoleCli
+class Process
 {
     /**
      * Run a command quietly as the current user.
@@ -40,7 +40,7 @@ class ConsoleCli
     {
         $onError = $onError ?: function (): void {
         };
-        $process = Process::fromShellCommandline($command);
+        $process = SymfonyProcess::fromShellCommandline($command);
         $processOutput = '';
 
         $process->setTimeout(null)->run(function ($type, $line) use (&$processOutput) {
