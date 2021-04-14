@@ -2,55 +2,42 @@
 
 namespace Console\Process;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process as SymfonyProcess;
 
 class Process
 {
-    /**
-     * Run a command quietly as the current user.
-     *
-     * @param  string  $command
-     * @return void
-     */
-    public function quietly($command)
-    {
-        $this->runCommand($command.' > /dev/null 2>&1');
-    }
+
+    protected $timeout = null;
+    protected $quiet = false;
 
     /**
-     * Run a command as the current user.
+     * Run the given command.
      *
-     * @param  string  $command
+     * @param  string|array  $command
      * @param  callable $onError
      * @return string
      */
     public function run($command, callable $onError = null)
     {
-        return $this->runCommand($command, $onError);
-    }
 
-    /**
-     * Run the given command.
-     *
-     * @param  string  $command
-     * @param  callable $onError
-     * @return string
-     */
-    private function runCommand($command, callable $onError = null)
-    {
-        $onError = $onError ?: function (): void {
-        };
-        $process = SymfonyProcess::fromShellCommandline($command);
-        $processOutput = '';
-
-        $process->setTimeout(null)->run(function ($type, $line) use (&$processOutput) {
-            $processOutput .= $line;
-        });
-
-        if ($process->getExitCode() > 0) {
-            $onError($process->getExitCode(), $processOutput);
+        if (is_array($command) || $command instanceof Arrayable) {
+            $process = new SymfonyProcess($command);
+        } else {
+            $process = SymfonyProcess::fromShellCommandline($command);
         }
 
-        return $processOutput;
+        ($this->quiet) && $process->disableOutput();
+
+        $process->setTimeout($this->timeout)->run();
+
+        if (!$process->isSuccessful() && !$this->quiet) {
+            ($onError !== null)
+                && $onError($process->getExitCode(), $process->getOutput())
+                || throw new ProcessFailedException($process);
+        }
+
+        return ($this->quiet) ? '' : $process->getOutput();
     }
 }
