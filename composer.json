@@ -1,7 +1,7 @@
 {
     "name": "ycore/console",
-    "description": "A super-slim console Process runner for creating command line interfaces, with a Configuration, and Logger component",
-    "keywords": ["command", "console", "facades", "logger", "testing"],
+    "description": "A super-slim collection for creating command line interfaces, with a Configuration, and Logger components",
+    "keywords": ["command", "console", "config", "logger", "testing"],
     "license": "MIT",
     "authors": [
         {
@@ -13,8 +13,6 @@
         "php": "^8.0",
         "illuminate/container": "^8.0",
         "psr/log": "^1.1",
-        "symfony/console": "^5.0",
-        "symfony/process": "^5.0",
         "symfony/yaml": "^5.0"
     },
     "autoload": {

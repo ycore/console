@@ -14,11 +14,12 @@ class Configuration
      *
      * @param null|string $file
      *
-     * @return void
+     * @return Configuration
      */
-    public function load(?string $file = null): void
+    public function load(?string $file = null): Configuration
     {
         $this->items = Yaml::parseFile($file);
+        return $this;
     }
 
     /**
@@ -38,14 +39,15 @@ class Configuration
      *
      * @param  array|string  $key
      * @param  mixed  $value
-     * @return void
+     * @return Configuration
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): Configuration
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
         foreach ($keys as $key => $value) {
             Arr::set($this->items, $key, $value);
         }
+        return $this;
     }
 }
