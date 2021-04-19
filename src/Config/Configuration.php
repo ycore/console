@@ -50,4 +50,20 @@ class Configuration
         }
         return $this;
     }
+
+    /**
+     * Get or Set a given configuration value.
+     *
+     * @param  array|string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    function config($key = null, $default = null)
+    {
+        if (is_array($key)) {
+            return $this->set($key);
+        }
+
+        return $this->get($key, $default);
+    }
 }
